@@ -70,7 +70,7 @@ export const TranslationContextProvider: React.FC<
         };
     });
 
-    const translateFunc = useCallback<TranslationFunc>(
+    const translate = useCallback<TranslationFunc>(
         (key: string) => {
             if (userTranslationFunc !== undefined) {
                 return userTranslationFunc(key);
@@ -89,5 +89,5 @@ export const TranslationContextProvider: React.FC<
         return null;
     }
 
-    return <TranslationContext.Provider value={{ translate: translateFunc }}>{children}</TranslationContext.Provider>;
+    return <TranslationContext.Provider value={{ translate }}>{children}</TranslationContext.Provider>;
 };
