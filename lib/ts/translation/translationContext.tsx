@@ -76,21 +76,11 @@ export const TranslationContextProvider: React.FC<
                 return userTranslationFunc(key);
             }
 
-            if (currentLanguage !== undefined) {
-                const res = translationStore[currentLanguage] && translationStore[currentLanguage][key];
-                const fallback = translationStore[defaultLanguage] && translationStore[defaultLanguage][key];
-
-                if (res === undefined) {
-                    if (fallback !== undefined) {
-                        return fallback;
-                    }
-                    return key;
-                }
-
-                return res;
+            if (currentLanguage === undefined) {
+                throw new Error("Should never come here");
             }
 
-            throw new Error("Should never come here");
+            return translationStore[currentLanguage]?.[key] ?? translationStore[defaultLanguage]?.[key] ?? key;
         },
         [translationStore, currentLanguage, defaultLanguage, userTranslationFunc]
     );
