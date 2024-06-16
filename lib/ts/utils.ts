@@ -443,7 +443,7 @@ export function getNormalisedUserContext(userContext?: UserContext): UserContext
  * and the component may be unmounted during the first fetch, in which case we want to avoid updating state/redirecting.
  * This is especially relevant for development in strict mode with React 18 (and in the future for concurrent rendering).
  *
- * @param fetch This is a callback that is only called once on mount. Mostly it's for consuming tokens/doing one time only API calls
+ * @param fetch This is a callback that is only called once on mount. Mostly it's for consuming tokens/doing one-time-only API calls
  * @param handleResponse This is called with the result of the first (fetch) call if it succeeds.
  * @param handleError This is called with the error of the first (fetch) call if it rejects.
  * @param startLoading Will start the whole process if this is set to true (or omitted). Mostly used to wait for session loading.
@@ -453,47 +453,50 @@ export const useOnMountAPICall = <T>(
     handleResponse: (consumeResp: T) => Promise<void>,
     handleError?: (err: unknown, consumeResp: T | undefined) => void | Promise<void>,
     startLoading = true
-) => {
+): void => {
     const consumeReq = useRef<Promise<T>>();
+    const [error, setError] = useState<unknown>(undefined);
 
-    const [error, setError] = useState<any>(undefined);
     useEffect(() => {
-        const effect = async (signal: AbortSignal) => {
-            let resp;
+        if (!startLoading) {
+            return;
+        }
+
+        const ctrl = new AbortController();
+        void effect(ctrl.signal);
+        return () => ctrl.abort();
+
+        async function effect(signal: AbortSignal) {
+            let resp: T | undefined;
+
             try {
                 if (consumeReq.current === undefined) {
                     consumeReq.current = fetch();
                 }
 
                 resp = await consumeReq.current;
-
-                if (!signal.aborted) {
-                    void handleResponse(resp);
+                if (signal.aborted) {
+                    return;
                 }
+
+                void handleResponse(resp);
             } catch (err) {
-                if (!signal.aborted) {
-                    if (handleError !== undefined) {
-                        try {
-                            await handleError(err, resp);
-                        } catch (err) {
-                            setError(err);
-                        }
-                    } else {
-                        setError(err);
-                    }
+                if (signal.aborted) {
+                    return;
+                }
+
+                if (!handleError) {
+                    return setError(err);
+                }
+
+                try {
+                    await handleError(err, resp);
+                } catch (err) {
+                    setError(err);
                 }
             }
-        };
-        if (startLoading) {
-            const ctrl = new AbortController();
-
-            void effect(ctrl.signal);
-            return () => {
-                ctrl.abort();
-            };
         }
-        return;
-    }, [setError, consumeReq, fetch, handleResponse, handleError, startLoading]);
+    }, [fetch, handleResponse, handleError, startLoading]);
 
     if (error) {
         throw error;
