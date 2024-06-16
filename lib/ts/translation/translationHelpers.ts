@@ -61,10 +61,12 @@ export async function saveCurrentLanguage(language: string, cookieDomain: string
     }
 }
 
+/** Gets the current language (if one is available) from the browser's cookie store */
 export async function getCurrentLanguageFromCookie(): Promise<string | null> {
     try {
         return await getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
     } catch {
+        // TODO: If this only throws in non-browser settings, should we have a `typeof window` check instead?
         // This can throw if we are not in a browser
         // Since this is just loading a preference we can safely ignore the exception
         return null;
