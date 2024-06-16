@@ -380,20 +380,16 @@ export function getDefaultCookieScope(): string | undefined {
     }
 }
 
+/** Gets the value of the cookie with the specified `name` */
 export async function getCookieValue(name: string): Promise<string | null> {
-    const value = "; " + (await CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie());
-    const parts = value.split("; " + name + "=");
-    if (parts.length >= 2) {
-        const last = parts.pop();
-        if (last !== undefined) {
-            const temp = last.split(";").shift();
-            if (temp === undefined) {
-                return null;
-            }
-            return temp;
-        }
+    const value = `; ${await CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie()}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length < 2) {
+        return null;
     }
-    return null;
+
+    return parts.pop()?.split(";").shift() ?? null;
 }
 
 // undefined value will remove the cookie
