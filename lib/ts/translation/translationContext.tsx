@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useMemo, useCallback, useContext, useEffect, useState } from "react";
 
 import { mergeObjects } from "../utils";
 
@@ -85,9 +85,11 @@ export const TranslationContextProvider: React.FC<
         [translationStore, currentLanguage, defaultLanguage, userTranslationFunc]
     );
 
+    const contextValue = useMemo(() => ({ translate }), [translate]);
+
     if (currentLanguage === undefined) {
         return null;
     }
 
-    return <TranslationContext.Provider value={{ translate }}>{children}</TranslationContext.Provider>;
+    return <TranslationContext.Provider value={contextValue}>{children}</TranslationContext.Provider>;
 };
