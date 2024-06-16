@@ -49,7 +49,7 @@ export const TranslationContextProvider: React.FC<
              */
             setCurrentLanguage((current) => (current !== undefined ? current : cookieLangTemp));
         })();
-    }, [defaultLanguage, setCurrentLanguage]);
+    }, [defaultLanguage]);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
