@@ -5,7 +5,9 @@ import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
 /* SuperTokens imports */
-import SuperTokens from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, useUserContext } from "supertokens-auth-react";
+import { AuthRecipeComponentsOverrideContextProvider } from "supertokens-auth-react/ui";
+import { EmailVerificationComponentsOverrideProvider } from "supertokens-auth-react/recipe/emailverification";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -337,6 +339,7 @@ const testContext = getTestContext();
 
 let recipeList = [
     TOTP.init(),
+    EmailVerification.init({ mode: "REQUIRED" }),
     Multitenancy.init({
         override: {
             functions: (oI) => ({
@@ -500,6 +503,7 @@ SuperTokens.init({
 /* App */
 function App() {
     useEffect(() => {
+        console.log("Has this thing started yet?");
         window.addEventListener("TP.getAuthorisationURLWithQueryParamsAndSetState", async () => {
             ThirdParty.getAuthorisationURLWithQueryParamsAndSetState({
                 providerId: "google",
@@ -521,12 +525,39 @@ function App() {
 
     return (
         <ErrorBoundary>
-            <AppWithReactDomRouter />
+            <SuperTokensWrapper>
+                <EmailVerificationComponentsOverrideProvider
+                    components={{
+                        EmailVerificationSendVerifyEmail_Override: ({ DefaultComponent, ...props }) => {
+                            return (
+                                <section>
+                                    <div>I want some chocolate milk PLEASE!!!</div>
+                                    <DefaultComponent {...props}>
+                                        <div slot="body">
+                                            <span>Yoo! We sent you a verification email! Isn't that cool?</span>
+                                            {/* DEFERRED: But how to use context from within a native Web Component? */}
+                                            <ComponentWithContext>Regular milk is better</ComponentWithContext>
+                                        </div>
+                                    </DefaultComponent>
+                                </section>
+                            );
+                        },
+                    }}>
+                    <AppWithReactDomRouter />
+                </EmailVerificationComponentsOverrideProvider>
+            </SuperTokensWrapper>
         </ErrorBoundary>
     );
 }
 
 export default App;
+
+function ComponentWithContext({ children }) {
+    const userContext = useUserContext();
+    console.log("User Context from Custom Component: ", userContext);
+
+    return <article>{children}</article>;
+}
 
 export function BaseComponent({ children }) {
     return (

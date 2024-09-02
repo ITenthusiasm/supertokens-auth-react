@@ -1,0 +1,7 @@
+/// <reference types="react" />
+type LabelProps = {
+    value: string;
+    showIsRequired?: boolean;
+};
+export default function Label({ value, showIsRequired }: LabelProps): JSX.Element;
+export {};

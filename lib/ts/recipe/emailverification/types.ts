@@ -90,14 +90,12 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signOut: () => Promise<void>;
-    onEmailAlreadyVerified: () => Promise<void>;
     redirectToAuth: () => Promise<void>;
 };
 
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
 };

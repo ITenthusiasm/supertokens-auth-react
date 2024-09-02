@@ -24,6 +24,7 @@ import { useSessionContext } from "../../../../session";
 
 import { SendVerifyEmail } from "./sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./verifyEmailLinkClicked";
+import "../../../../emailpassword/components/themes/web-components/SolidThemeBase";
 
 import type { EmailVerificationThemeProps } from "../../../types";
 
@@ -50,17 +51,17 @@ function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.
 
     return (
         <UserContextWrapper userContext={props.userContext}>
-            <ThemeBase
-                loadDefaultFont={!hasFont}
+            <solid-theme-base
+                loaddefaultfont={!hasFont}
                 userStyles={[
                     rootStyle,
                     props.config.recipeRootStyle,
                     props.verifyEmailLinkClickedScreen === undefined
                         ? props.config.sendVerifyEmailScreen.style
                         : props.config.verifyEmailLinkClickedScreen.style,
-                ]}>
+                ].join("\n")}>
                 <EmailVerificationTheme {...props} />
-            </ThemeBase>
+            </solid-theme-base>
         </UserContextWrapper>
     );
 }

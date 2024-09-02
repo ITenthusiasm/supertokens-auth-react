@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "noImplicitAny": true,
+        "target": "ES2022", // Or 2022
+        "noImplicitAny": false,
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "noImplicitThis": true,
@@ -14,12 +14,11 @@
         "sourceMap": false,
         "skipLibCheck": true,
         "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "noImplicitReturns": true,
         "importHelpers": false,
-        "noFallthroughCasesInSwitch": true,
-        "types": ["node", "react"]
+        "noFallthroughCasesInSwitch": true
     },
     "compileOnSave": true
 }

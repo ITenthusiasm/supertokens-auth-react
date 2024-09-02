@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useContext, useEffect, useState } from "react";
+import { createSignal } from "solid-js";
 
 import { mergeObjects } from "../utils";
 
@@ -23,6 +24,9 @@ export const TranslationContext = React.createContext<TranslationContextType>({
 export const useTranslation = (): TranslationFunc => {
     return useContext(TranslationContext).translate;
 };
+
+const [getTranslate, setTranslationFunction] = createSignal<TranslationFunc>(() => "");
+export { getTranslate };
 
 export const TranslationContextProvider: React.FC<
     PropsWithChildren<{
@@ -85,6 +89,7 @@ export const TranslationContextProvider: React.FC<
         [translationStore, currentLanguage, defaultLanguage, userTranslationFunc]
     );
 
+    useMemo(() => setTranslationFunction(() => translate), [translate]);
     const contextValue = useMemo(() => ({ translate }), [translate]);
 
     if (currentLanguage === undefined) {

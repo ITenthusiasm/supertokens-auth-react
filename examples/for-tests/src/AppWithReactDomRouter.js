@@ -27,7 +27,7 @@ function AppWithReactDomRouter(props) {
 
     const context = getTestContext();
     const enabledRecipes = getEnabledRecipes();
-    const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+    const emailVerificationMode = window.localStorage.getItem("mode") || "ON";
     const websiteBasePath = window.localStorage.getItem("websiteBasePath") || undefined;
 
     let recipePreBuiltUIList = [TOTPPreBuiltUI];

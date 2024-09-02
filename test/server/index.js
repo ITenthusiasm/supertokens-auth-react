@@ -552,6 +552,7 @@ function initST() {
                             ...oI,
                             sendEmail: async (input) => {
                                 latestURLWithToken = input.emailVerifyLink;
+                                console.log("Link: ", input.emailVerifyLink);
                             },
                         };
                     },

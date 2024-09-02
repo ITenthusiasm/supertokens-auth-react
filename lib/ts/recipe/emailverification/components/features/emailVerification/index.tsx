@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { useContext, useState, useMemo, useCallback, Fragment } from "react";
+import { useContext, useState, useEffect, useMemo, useCallback, Fragment } from "react";
 
 import { redirectToAuth } from "../../../../..";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -79,6 +79,11 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             .catch(rethrowInRender);
     }, [props.recipe, props.navigate, userContext]);
 
+    useEffect(() => {
+        document.addEventListener("emailverificationsuccess", onSuccess);
+        return () => document.removeEventListener("emailverificationsuccess", onSuccess);
+    }, [onSuccess]);
+
     const fetchIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {
             // This callback should only be called if the session is already loaded
@@ -138,7 +143,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         recipeImplementation: modifiedRecipeImplementation,
         config: props.recipe.config,
         signOut: signOut,
-        onEmailAlreadyVerified: onSuccess,
         redirectToAuth: redirectToAuthWithHistory,
     };
 
@@ -151,7 +155,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             : {
                   styleFromInit: verifyEmailLinkClickedScreenFeature.style,
                   onTokenInvalidRedirect: redirectToAuthWithHistory,
-                  onSuccess,
                   recipeImplementation: modifiedRecipeImplementation,
                   config: props.recipe.config,
                   token,
@@ -159,10 +162,11 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const childProps = {
         config: props.recipe.config,
-        sendVerifyEmailScreen: sendVerifyEmailScreen,
+        sendVerifyEmailScreen,
         verifyEmailLinkClickedScreen,
         hasToken: token !== undefined,
     };
+
     return (
         <ComponentOverrideContext.Provider value={recipeComponentOverrides}>
             <FeatureWrapper

@@ -301,7 +301,7 @@ export const SignInUpFeature: React.FC<
                                     ...childProps,
                                     featureState: state,
                                     dispatch: dispatch,
-                                });
+                                } as any);
                             }
                             return child;
                         })}
